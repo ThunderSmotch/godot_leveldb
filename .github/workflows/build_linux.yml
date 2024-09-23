@@ -60,6 +60,8 @@ jobs:
       - name: Compilation
         run: |
           mkdir -v -p ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+          pwd
+          ls
           cd ${{ env.PROJECT_FOLDER }}
           scons platform=linux target=${{ matrix.target }} target_path=${{ env.TARGET_PATH }} target_name=${{ env.TARGET_NAME }} -j6 ${{ matrix.flags }}
 
