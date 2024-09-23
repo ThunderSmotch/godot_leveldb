@@ -1,0 +1,82 @@
+name: 🐧 Linux Build
+on:
+  push:
+    branches: [ master, main ]
+
+# Global Settings
+env:
+  PROJECT_FOLDER: godot_leveldb
+  TARGET_PATH: demo/bin/
+  TARGET_NAME: libgdleveldb
+  SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
+
+jobs:
+  linux-compilation:
+    runs-on: "ubuntu-20.04"
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu (GCC) - Debug
+            cache-name: linux-x86_64
+            target: template_debug
+            artifact-extension: so
+          - name: Ubuntu (GCC) - Release
+            cache-name: linux-x86_64
+            target: template_release
+            artifact-extension: so
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Restore Godot build cache
+        uses: ./godot_leveldb/godot-cpp/.github/actions/godot-cache-restore
+        with:
+          cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}
+        continue-on-error: true
+
+      # Use python 3.x release (works cross platform; best to keep self contained in it's own step)
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v5
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.x'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+
+      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
+      - name: Configuring Python packages
+        run: |
+          python -c "import sys; print(sys.version)"
+          python -m pip install scons
+          python --version
+          scons --version
+
+      - name: Compilation
+        run: |
+          mkdir -v -p ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+          cd ${{ env.PROJECT_FOLDER }}
+          scons platform=linux target=${{ matrix.target }} target_path=${{ env.TARGET_PATH }} target_name=${{ env.TARGET_NAME }} -j6 ${{ matrix.flags }}
+
+      - name: Save Godot build cache
+        uses: ./godot_leveldb/godot-cpp/.github/actions/godot-cache-save
+        with:
+          cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}
+        continue-on-error: true
+
+      - name: Upload Artifact
+        env:
+          ARTIFACT_FOLDER: ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.cache-name }}-${{ matrix.target }}
+          path: ${{ env.ARTIFACT_FOLDER }}*.${{ matrix.artifact-extension }}
+          if-no-files-found: error
+
+
+    
