@@ -2,6 +2,12 @@
 import os
 import sys
 
+target_path = ARGUMENTS.pop("target_path", "demo/bin/")
+target_name = ARGUMENTS.pop("target_name", "libgdleveldb")
+target = "{}{}".format(
+    target_path, target_name
+)
+
 env = SConscript("godot-cpp/SConstruct")
 
 # For reference:
@@ -21,14 +27,14 @@ sources = [Glob("src/leveldb/*/*.cc", exclude=['src/leveldb/*/*_test.cc', 'src/l
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "demo/bin/libgdleveldb.{}.{}.framework/libgdleveldb.{}.{}".format(
-            env["platform"], env["target"], env["platform"], env["target"]
+        "{}.{}.{}.framework/libgdleveldb.{}.{}".format(
+            target, env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "demo/bin/libgdleveldb{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "{}{}{}".format(target, env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 
