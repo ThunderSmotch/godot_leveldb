@@ -35,7 +35,7 @@ jobs:
           submodules: recursive
 
       - name: Restore Godot build cache
-        uses: ./godot_leveldb/godot-cpp/.github/actions/godot-cache-restore
+        uses: ./godot-cpp/.github/actions/godot-cache-restore
         with:
           cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}
         continue-on-error: true
@@ -59,21 +59,18 @@ jobs:
 
       - name: Compilation
         run: |
-          mkdir -v -p ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
-          pwd
-          ls
-          cd ${{ env.PROJECT_FOLDER }}
+          mkdir -v -p ${{ env.TARGET_PATH }}
           scons platform=linux target=${{ matrix.target }} target_path=${{ env.TARGET_PATH }} target_name=${{ env.TARGET_NAME }} -j6 ${{ matrix.flags }}
 
       - name: Save Godot build cache
-        uses: ./godot_leveldb/godot-cpp/.github/actions/godot-cache-save
+        uses: ./godot-cpp/.github/actions/godot-cache-save
         with:
           cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}
         continue-on-error: true
 
       - name: Upload Artifact
         env:
-          ARTIFACT_FOLDER: ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+          ARTIFACT_FOLDER: ${{ env.TARGET_PATH }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.cache-name }}-${{ matrix.target }}
