@@ -1,0 +1,43 @@
+*.dblite
+demo/leveldb
+.godot/
+
+# Compiled source #
+###################
+*.com
+*.class
+*.exe
+*.o
+*.os
+*.obj
+*.exp
+*.pdb
+*.lib
+*.bc
+*.so
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Etc
+.sconsign.dblite
+demo/build
+test_backup_new.json
+test_backup_base64_new.json
+
+# VS
+vsproj/.vs/
+vsproj/Debug/
+vsproj/Release/
+vsproj/x64/
+vsproj/x86/
+vsproj/gdsqlite.vcxproj.*
+
+.vscode
