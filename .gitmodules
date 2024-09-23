@@ -2,6 +2,8 @@
 	path = godot-cpp
 	url = https://github.com/godotengine/godot-cpp
 	branch = 4.3
+	ignore = dirty
 [submodule "src/leveldb"]
 	path = src/leveldb
 	url = https://github.com/google/leveldb.git
+	ignore = dirty
