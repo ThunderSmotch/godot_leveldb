@@ -43,7 +43,7 @@ jobs:
           submodules: recursive
 
       - name: Restore Godot build cache
-        uses: ./${{ env.PROJECT_FOLDER }}/godot-cpp/.github/actions/godot-cache-restore
+        uses: ./godot-cpp/.github/actions/godot-cache-restore
         with:
           cache-name: ${{ matrix.build.cache-name }}-${{ matrix.target }}
         continue-on-error: true
@@ -84,7 +84,7 @@ jobs:
           scons platform=${{ matrix.build.platform }} target=${{ matrix.target }} target_path=${{ env.TARGET_PATH }} target_name=${{ env.TARGET_NAME }} -j6 ${{ matrix.build.flags }}
 
       - name: Save Godot build cache
-        uses: ./${{ env.PROJECT_FOLDER }}/godot-cpp/.github/actions/godot-cache-save
+        uses: ./godot-cpp/.github/actions/godot-cache-save
         with:
           cache-name: ${{ matrix.build.cache-name }}-${{ matrix.target }}
         continue-on-error: true
