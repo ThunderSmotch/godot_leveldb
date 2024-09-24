@@ -13,7 +13,7 @@ env:
   SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
 
 jobs:
-  compilation:
+  build:
     runs-on: ${{ matrix.build.os }}
     name: ${{ matrix.build.platform }} - ${{ matrix.target == 'template_debug' && 'Debug' || 'Release' }}
     strategy:
@@ -97,6 +97,42 @@ jobs:
           name: ${{ matrix.build.cache-name }}-${{ matrix.target }}
           path: ${{ env.ARTIFACT_FOLDER }}*.${{ matrix.build.artifact-extension }}
           if-no-files-found: error
+  release:
+    name: "Release"
+    runs-on: "ubuntu-20.04"
+    needs: [build]
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Download Artifacts
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Copy Artifacts to bin/-folder
+        run: |
+          mkdir -v -p ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+          cd ${{ env.PROJECT_FOLDER }}
+          cp -r ${{steps.download.outputs.download-path}}/**/* ${{ env.TARGET_PATH }}
+          zip -r demo.zip demo/
+          cd ${{ env.TARGET_PATH }}/..
+          zip -r bin.zip bin/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: ${{ env.PROJECT_FOLDER }}/.github/workflows/release_template.md
+          files: |
+            ${{ env.PROJECT_FOLDER }}/demo.zip
+            ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}/../bin.zip
+          draft: true
+          prerelease: true
 
 
     
