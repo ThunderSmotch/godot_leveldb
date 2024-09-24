@@ -13,7 +13,6 @@ env:
   SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
 
 jobs:
-
   compilation:
     runs-on: ${{ matrix.build.os }}
     name: ${{ matrix.build.platform }} - ${{ matrix.target == 'template_debug' && 'Debug' || 'Release' }}
