@@ -73,9 +73,9 @@ bool GDLevelDB::close()
 	return true;
 }
 
-TypedArray<PackedByteArray> GDLevelDB::keys()
+Array GDLevelDB::keys()
 {
-	TypedArray<PackedByteArray> keys;
+	Array keys;
 
 	if(db == nullptr)
 	{

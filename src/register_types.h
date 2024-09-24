@@ -5,7 +5,7 @@
 
 using namespace godot;
 
-void initialize_example_module(ModuleInitializationLevel p_level);
-void uninitialize_example_module(ModuleInitializationLevel p_level);
+void initialize_leveldb_module(ModuleInitializationLevel p_level);
+void uninitialize_leveldb_module(ModuleInitializationLevel p_level);
 
 #endif // GDLEVELDB_REGISTER_TYPES_H

@@ -30,7 +30,8 @@ public:
 	bool open(String path);
 	bool close();
 
-	TypedArray<PackedByteArray> keys();
+	// TODO: Swap to TypedArray<PackedByteArray> when godot-cpp updates
+	Array keys();
 	PackedByteArray get(PackedByteArray key);
 	// TODO put, delete
 	void print(PackedByteArray bytes);
