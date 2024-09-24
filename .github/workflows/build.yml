@@ -1,0 +1,103 @@
+name: All Builds
+on:
+  push:
+    tags: 
+      - "v*"
+  workflow_dispatch:
+
+# Global Settings
+env:
+  PROJECT_FOLDER: .
+  TARGET_PATH: demo/bin/
+  TARGET_NAME: libgdleveldb
+  SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
+
+jobs:
+
+  compilation:
+    runs-on: ${{ matrix.build.os }}
+    name: ${{ matrix.build.platform }} - ${{ matrix.target == 'template_debug' && 'Debug' || 'Release' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [template_debug, template_release]
+        # TODO Add Android build
+        build:
+          - os: ubuntu-20.04
+            platform: linux
+            artifact-extension: so
+            cache-name: linux-x86_64
+          - os: windows-latest
+            platform: windows
+            artifact-extension: dll
+            cache-name: win-x86_64-mingw
+            flags: use_mingw=yes
+          - os: macos-latest
+            platform: macos
+            artifact-extension: framework
+            cache-name: macos-universal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Restore Godot build cache
+        uses: ./${{ env.PROJECT_FOLDER }}/godot-cpp/.github/actions/godot-cache-restore
+        with:
+          cache-name: ${{ matrix.build.cache-name }}-${{ matrix.target }}
+        continue-on-error: true
+
+      # Use python 3.x release (works cross platform; best to keep self contained in it's own step)
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v5
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.x'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+
+      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
+      - name: Configuring Python packages
+        run: |
+          python -c "import sys; print(sys.version)"
+          python -m pip install scons
+          python --version
+          scons --version
+
+      - name: Setup Target directory (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          if(-Not (Test-Path -Path ${{ env.PROJECT_FOLDER }}\${{ env.TARGET_PATH }}))
+          {
+            mkdir ${{ env.PROJECT_FOLDER }}\${{ env.TARGET_PATH }}
+          }
+
+      - name: Setup Target directory
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -v -p ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+
+      - name: Compilation
+        run: |
+          cd ${{ env.PROJECT_FOLDER }}
+          scons platform=${{ matrix.build.platform }} target=${{ matrix.target }} target_path=${{ env.TARGET_PATH }} target_name=${{ env.TARGET_NAME }} -j6 ${{ matrix.build.flags }}
+
+      - name: Save Godot build cache
+        uses: ./${{ env.PROJECT_FOLDER }}/godot-cpp/.github/actions/godot-cache-save
+        with:
+          cache-name: ${{ matrix.build.cache-name }}-${{ matrix.target }}
+        continue-on-error: true
+
+      - name: Upload Artifact
+        env:
+          ARTIFACT_FOLDER: ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.build.cache-name }}-${{ matrix.target }}
+          path: ${{ env.ARTIFACT_FOLDER }}*.${{ matrix.build.artifact-extension }}
+          if-no-files-found: error
+
+
+    

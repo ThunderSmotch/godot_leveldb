@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-import sys
 
 target_path = ARGUMENTS.pop("target_path", "demo/bin/")
 target_name = ARGUMENTS.pop("target_name", "libgdleveldb")
@@ -21,14 +19,24 @@ env = SConscript("godot-cpp/SConstruct")
 # Should change the env_windows.cc to other excludes depending on target arch...
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
-env.Append(CPPPATH=["src/", "src/leveldb/include/", "src/leveldb/"], CPPDEFINES=['LEVELDB_PLATFORM_POSIX'])
-sources = [Glob("src/leveldb/*/*.cc", exclude=['src/leveldb/*/*_test.cc', 'src/leveldb/benchmarks/*.cc', 
-                                               'src/leveldb/util/env_windows.cc', 'src/leveldb/util/testutil.cc']), Glob("src/*.cpp")]
+env.Append(CPPPATH=["src/", "src/leveldb/include/", "src/leveldb/"])
+sources = [Glob("src/leveldb/*/*.cc", 
+                exclude=['src/leveldb/*/*_test.cc', 'src/leveldb/benchmarks/*.cc',
+                        'src/leveldb/util/env_*.cc', 'src/leveldb/util/testutil.cc']), Glob("src/*.cpp")]
+
+# leveldb defines and sources according to platform 
+if env["platform"] == "windows":
+    env.Append(CPPDEFINES=['LEVELDB_PLATFORM_WINDOWS'])
+    sources.append(Glob("src/leveldb/util/env_windows.cc"))
+else:
+    env.Append(CPPDEFINES=['LEVELDB_PLATFORM_POSIX'])
+    sources.append(Glob("src/leveldb/util/env_posix.cc"))
+
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "{}.{}.{}.framework/libgdleveldb.{}.{}".format(
-            target, env["platform"], env["target"], env["platform"], env["target"]
+        "{}.{}.{}.framework/{}.{}.{}".format(
+            target, env["platform"], env["target"], target_name, env["platform"], env["target"]
         ),
         source=sources,
     )
