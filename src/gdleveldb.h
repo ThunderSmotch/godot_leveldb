@@ -13,7 +13,7 @@ class GDLevelDB : public RefCounted {
 
 private:
 	leveldb::DB* db = nullptr;
-	Dictionary options;
+	Dictionary options; // TODO Phase this out
 
 	enum CompressionType {
 		NO_COMPRESSION,
@@ -34,9 +34,9 @@ public:
 	Array keys();
 
 	PackedByteArray get(PackedByteArray key);
-	bool put(PackedByteArray key, PackedByteArray value);
-	bool _delete(PackedByteArray key);
-	
+	bool put(PackedByteArray key, PackedByteArray value, bool sync);
+	bool _delete(PackedByteArray key, bool sync);
+
 	void print(PackedByteArray bytes);
 };
 

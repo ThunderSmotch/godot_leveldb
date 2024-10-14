@@ -12,8 +12,8 @@ void GDLevelDB::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("close"), &GDLevelDB::close);
 	ClassDB::bind_method(D_METHOD("keys"), &GDLevelDB::keys);
 	ClassDB::bind_method(D_METHOD("get", "key"), &GDLevelDB::get);
-	ClassDB::bind_method(D_METHOD("put", "key", "value"), &GDLevelDB::put);
-	ClassDB::bind_method(D_METHOD("delete", "key"), &GDLevelDB::_delete);
+	ClassDB::bind_method(D_METHOD("put", "key", "value", "sync"), &GDLevelDB::put, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("delete", "key", "sync"), &GDLevelDB::_delete, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("print", "bytes"), &GDLevelDB::print);
 }
 
@@ -153,7 +153,7 @@ PackedByteArray GDLevelDB::get(PackedByteArray key)
 	return data;
 }
 
-bool GDLevelDB::put(PackedByteArray key, PackedByteArray value)
+bool GDLevelDB::put(PackedByteArray key, PackedByteArray value, bool sync = false)
 {
 	if(db == nullptr)
 	{
@@ -163,10 +163,13 @@ bool GDLevelDB::put(PackedByteArray key, PackedByteArray value)
 
 	auto key_slice = leveldb::Slice((const char *) key.ptr(), key.size());
 	auto value_slice = leveldb::Slice((const char *) value.ptr(), value.size());
+	
+	auto options = leveldb::WriteOptions();
+	options.sync = sync;
 
 	// FIXME If Put is async won't value slice potentially point to dead memory?
 	// Maybe this should be noted in the documentation.
-	leveldb::Status status = db->Put(leveldb::WriteOptions(), key_slice, value_slice);
+	leveldb::Status status = db->Put(options, key_slice, value_slice);
 
 	if (false == status.ok())
 	{
@@ -178,7 +181,7 @@ bool GDLevelDB::put(PackedByteArray key, PackedByteArray value)
 	return true;
 }
 
-bool GDLevelDB::_delete(PackedByteArray key)
+bool GDLevelDB::_delete(PackedByteArray key, bool sync)
 {
 	if(db == nullptr)
 	{
@@ -187,7 +190,10 @@ bool GDLevelDB::_delete(PackedByteArray key)
 	}
 
 	auto key_slice = leveldb::Slice((const char *) key.ptr(), key.size());
-	leveldb::Status status = db->Delete(leveldb::WriteOptions(), key_slice);
+	auto options = leveldb::WriteOptions();
+	options.sync = sync;
+
+	leveldb::Status status = db->Delete(options, key_slice);
 
 	if (false == status.ok())
 	{

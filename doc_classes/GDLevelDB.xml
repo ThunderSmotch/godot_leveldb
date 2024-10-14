@@ -28,8 +28,10 @@
 		<method name="delete">
 			<return type="bool" />
 			<param index="0" name="key" type="PackedByteArray" />
+			<param index="1" name="sync" type="bool" default="false" />
 			<description>
 				Deletes the key/value pair specified by [code]key[/code] from the database.
+				[b]Note:[/b] If [code]sync[/code] is true then the operation is done synchronously, albeit at a slower speed.
 			</description>
 		</method>
 		<method name="get">
@@ -57,7 +59,6 @@
 			<param index="0" name="bytes" type="PackedByteArray" />
 			<description>
 				Attempts to print [code]bytes[/code] assuming they are an ASCII encoded string.
-
 				[b]Note:[/b] Will skip NULL character, which are allowed in the middle of leveldb keys and values.
 			</description>
 		</method>
@@ -65,8 +66,10 @@
 			<return type="bool" />
 			<param index="0" name="key" type="PackedByteArray" />
 			<param index="1" name="value" type="PackedByteArray" />
+			<param index="2" name="sync" type="bool" default="false" />
 			<description>
 				Puts the data inside [code]value[/code] into the database in a key/value pair specified by [code]key[/code].
+				[b]Note:[/b] If [code]sync[/code] is true then the operation is done synchronously, albeit at a slower speed.
 			</description>
 		</method>
 	</methods>
