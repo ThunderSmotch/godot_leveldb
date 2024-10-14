@@ -25,6 +25,13 @@
 				Closes a previously opened database.
 			</description>
 		</method>
+		<method name="delete">
+			<return type="bool" />
+			<param index="0" name="key" type="PackedByteArray" />
+			<description>
+				Deletes the key/value pair specified by [code]key[/code] from the database.
+			</description>
+		</method>
 		<method name="get">
 			<return type="PackedByteArray" />
 			<param index="0" name="key" type="PackedByteArray" />
@@ -52,6 +59,14 @@
 				Attempts to print [code]bytes[/code] assuming they are an ASCII encoded string.
 
 				[b]Note:[/b] Will skip NULL character, which are allowed in the middle of leveldb keys and values.
+			</description>
+		</method>
+		<method name="put">
+			<return type="bool" />
+			<param index="0" name="key" type="PackedByteArray" />
+			<param index="1" name="value" type="PackedByteArray" />
+			<description>
+				Puts the data inside [code]value[/code] into the database in a key/value pair associated to [code]key[/code].
 			</description>
 		</method>
 	</methods>

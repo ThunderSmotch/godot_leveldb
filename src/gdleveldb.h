@@ -32,8 +32,11 @@ public:
 
 	// TODO: Swap to TypedArray<PackedByteArray> when godot-cpp updates
 	Array keys();
+
 	PackedByteArray get(PackedByteArray key);
-	// TODO put, delete
+	bool put(PackedByteArray key, PackedByteArray value);
+	bool _delete(PackedByteArray key);
+	
 	void print(PackedByteArray bytes);
 };
 
