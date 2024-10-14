@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GDLevelDB" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A leveldb wrapper for Godot.
+	</brief_description>
+	<description>
+		A leveldb wrapper for Godot.
+		[b]Example usage:[\b]
+		[codeblock]
+		extends Node
+
+		var db = GDLevelDB.new()
+
+		func _ready():
+			pass
+		[/codeblock]
+	</description>
+	<tutorials>
+		<link title="GitHub Repository">https://github.com/ThunderSmotch/godot_leveldb/</link>
+	</tutorials>
+	<methods>
+		<method name="close">
+			<return type="bool" />
+			<description>
+				Closes a previously opened database.
+			</description>
+		</method>
+		<method name="get">
+			<return type="PackedByteArray" />
+			<param index="0" name="key" type="PackedByteArray" />
+			<description>
+				Gets the value from the given [code]key[/code].
+			</description>
+		</method>
+		<method name="keys">
+			<return type="Array" />
+			<description>
+				Returns an array with all the keys stored inside the database.
+			</description>
+		</method>
+		<method name="open">
+			<return type="bool" />
+			<param index="0" name="path" type="String" />
+			<description>
+				Opens a database in the directory pointed by [code]path[/code].
+			</description>
+		</method>
+		<method name="print">
+			<return type="void" />
+			<param index="0" name="bytes" type="PackedByteArray" />
+			<description>
+				Attempts to print [code]bytes[/code] assuming they are an ASCII encoded string.
+
+				[b]Note:[/b] Will skip NULL character, which are allowed in the middle of leveldb keys and values.
+			</description>
+		</method>
+	</methods>
+</class>

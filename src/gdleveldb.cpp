@@ -12,7 +12,6 @@ void GDLevelDB::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("close"), &GDLevelDB::close);
 	ClassDB::bind_method(D_METHOD("keys"), &GDLevelDB::keys);
 	ClassDB::bind_method(D_METHOD("get", "key"), &GDLevelDB::get);
-
 	ClassDB::bind_method(D_METHOD("print", "bytes"), &GDLevelDB::print);
 }
 
@@ -153,7 +152,7 @@ PackedByteArray GDLevelDB::get(PackedByteArray key)
 }
 
 // Attempts to print bytes assuming they are an ASCII string
-// Will skip NULL characters (which are allowed in the middle of LevelDB keys and values)
+// Will skip NULL characters (which are allowed in the middle of leveldb keys and values)
 void GDLevelDB::print(PackedByteArray bytes)
 {
 	String string;
