@@ -5,14 +5,14 @@
 	</brief_description>
 	<description>
 		A leveldb wrapper for Godot.
-		[b]Example usage:[\b]
+		[b]Example usage:[/b]
 		[codeblock]
 		extends Node
 
 		var db = GDLevelDB.new()
 
 		func _ready():
-			pass
+		    pass
 		[/codeblock]
 	</description>
 	<tutorials>
@@ -66,7 +66,7 @@
 			<param index="0" name="key" type="PackedByteArray" />
 			<param index="1" name="value" type="PackedByteArray" />
 			<description>
-				Puts the data inside [code]value[/code] into the database in a key/value pair associated to [code]key[/code].
+				Puts the data inside [code]value[/code] into the database in a key/value pair specified by [code]key[/code].
 			</description>
 		</method>
 	</methods>
