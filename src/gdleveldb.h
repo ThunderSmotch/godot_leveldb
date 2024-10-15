@@ -14,11 +14,6 @@ class GDLevelDB : public RefCounted {
 private:
 	leveldb::DB* db = nullptr;
 
-	enum CompressionType {
-		NO_COMPRESSION,
-		SNAPPY_COMPRESSION
-	};
-
 protected:
 	static void _bind_methods();
 
