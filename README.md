@@ -1,6 +1,6 @@
 # Godot LevelDB
 
-A GDExtension providing a wrapper for the LevelDB library. Compatible with Godot 4.1+.
+A GDExtension providing a wrapper for the LevelDB library. Compatible with Godot 4.3+.
 
 # Credits
 - The Godot team and all its contributors.

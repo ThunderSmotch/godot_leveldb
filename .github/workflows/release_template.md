@@ -2,7 +2,7 @@ Download the demo-project and/or the necessary binaries below.
 
 ### Dependencies Versions
 
-Godot vxx.xx.xx  
+Godot v4.3+  
 
 ### Supported Operating Systems:
 - Linux
