@@ -10,6 +10,7 @@ A GDExtension providing a wrapper for the LevelDB library. Compatible with Godot
 # Features for future versions
 - [ ] Snapshots
 - [ ] Batch operations
+- [ ] Comparator functions
 
 # Development
 
