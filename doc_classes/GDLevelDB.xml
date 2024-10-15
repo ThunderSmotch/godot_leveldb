@@ -28,17 +28,22 @@
 		<method name="delete">
 			<return type="bool" />
 			<param index="0" name="key" type="PackedByteArray" />
-			<param index="1" name="sync" type="bool" default="false" />
+			<param index="1" name="options" type="Dictionary" default="{ &quot;sync&quot;: false }" />
 			<description>
-				Deletes the key/value pair specified by [code]key[/code] from the database.
-				[b]Note:[/b] If [code]sync[/code] is true then the operation is done synchronously, albeit at a slower speed.
+				Deletes the key/value pair specified by [param key] from the database.
+				[b]Note:[/b] [param options] can be given to customize behavior:
+				- If [param sync] is [code]true[/code], then the operation is done synchronously, albeit at a slower speed.
 			</description>
 		</method>
 		<method name="get">
 			<return type="PackedByteArray" />
 			<param index="0" name="key" type="PackedByteArray" />
+			<param index="1" name="options" type="Dictionary" default="{ &quot;fill_cache&quot;: true, &quot;verify_checksums&quot;: false }" />
 			<description>
-				Gets the value from the given [code]key[/code].
+				Gets the value from the given [param key].
+				[b]Note:[/b] [param options] can be given to customize behavior:
+				- If [param fill_cache] is [code]true[/code], then read data is cached in memory. You may want to disable this for bulk scans. 
+				- If [param verify_checksums] is [code]true[/code], all data read from underlying storage will be verified against corresponding checksums.
 			</description>
 		</method>
 		<method name="keys">
@@ -50,26 +55,32 @@
 		<method name="open">
 			<return type="bool" />
 			<param index="0" name="path" type="String" />
+			<param index="1" name="options" type="Dictionary" default="{ &quot;create_if_missing&quot;: false, &quot;error_if_exists&quot;: false, &quot;paranoid_checks&quot;: false }" />
 			<description>
-				Opens a database in the directory pointed by [code]path[/code].
+				Opens a database in the directory pointed by [param path].
+				[b]Note:[/b] [param options] can be given to customize behavior:
+				- If [param create_if_missing] is [code]true[/code], then the database is created if it does not exist at that directory. 
+				- If [param error_if_exists] is [code]true[/code], then an error is thrown if the database already exists at that directory. 
+				- If [param paranoid_checks] is [code]true[/code], then the the implementation will do aggressive checking of the data it is processing and will stop early if it detects any errors.
 			</description>
 		</method>
 		<method name="print">
 			<return type="void" />
 			<param index="0" name="bytes" type="PackedByteArray" />
 			<description>
-				Attempts to print [code]bytes[/code] assuming they are an ASCII encoded string.
-				[b]Note:[/b] Will skip NULL character, which are allowed in the middle of leveldb keys and values.
+				Attempts to print [param bytes] assuming they are an ASCII encoded string.
+				[b]Note:[/b] Will skip [code]NULL[/code] characters, which are allowed in the middle of leveldb keys and values.
 			</description>
 		</method>
 		<method name="put">
 			<return type="bool" />
 			<param index="0" name="key" type="PackedByteArray" />
 			<param index="1" name="value" type="PackedByteArray" />
-			<param index="2" name="sync" type="bool" default="false" />
+			<param index="2" name="options" type="Dictionary" default="{ &quot;sync&quot;: false }" />
 			<description>
-				Puts the data inside [code]value[/code] into the database in a key/value pair specified by [code]key[/code].
-				[b]Note:[/b] If [code]sync[/code] is true then the operation is done synchronously, albeit at a slower speed.
+				Puts the data inside [param value] into the database in a key/value pair specified by [param key].
+				[b]Note:[/b] [param options] can be given to customize behavior:
+				- If [param sync] is [code]true[/code], then the operation is done synchronously, albeit at a slower speed.
 			</description>
 		</method>
 	</methods>

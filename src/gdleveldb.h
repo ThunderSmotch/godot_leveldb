@@ -13,7 +13,6 @@ class GDLevelDB : public RefCounted {
 
 private:
 	leveldb::DB* db = nullptr;
-	Dictionary options; // TODO Phase this out
 
 	enum CompressionType {
 		NO_COMPRESSION,
@@ -27,15 +26,15 @@ public:
 	GDLevelDB();
 	~GDLevelDB();
 
-	bool open(String path);
+	bool open(String path, Dictionary options);
 	bool close();
 
 	// TODO: Swap to TypedArray<PackedByteArray> when godot-cpp updates
 	Array keys();
 
-	PackedByteArray get(PackedByteArray key);
-	bool put(PackedByteArray key, PackedByteArray value, bool sync);
-	bool _delete(PackedByteArray key, bool sync);
+	PackedByteArray get(PackedByteArray key, Dictionary options);
+	bool put(PackedByteArray key, PackedByteArray value, Dictionary options);
+	bool _delete(PackedByteArray key, Dictionary options);
 
 	void print(PackedByteArray bytes);
 };

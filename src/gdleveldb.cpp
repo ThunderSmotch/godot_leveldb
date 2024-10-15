@@ -7,21 +7,36 @@
 
 using namespace godot;
 
+
+inline leveldb::Slice slice_from_bytes(PackedByteArray bytes)
+{
+	return leveldb::Slice((const char *) bytes.ptr(), bytes.size());
+}
+
 void GDLevelDB::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("open", "path"), &GDLevelDB::open);
+	Dictionary options = Dictionary();
+	options["create_if_missing"] = false;
+	options["error_if_exists"] = false;
+	options["paranoid_checks"] = false;
+
+	Dictionary write_options = Dictionary();
+	write_options["sync"] = false;
+
+	Dictionary read_options = Dictionary();
+	read_options["verify_checksums"] = false;
+	read_options["fill_cache"] = true;
+
+	ClassDB::bind_method(D_METHOD("open", "path", "options"), &GDLevelDB::open, DEFVAL(options));
 	ClassDB::bind_method(D_METHOD("close"), &GDLevelDB::close);
 	ClassDB::bind_method(D_METHOD("keys"), &GDLevelDB::keys);
-	ClassDB::bind_method(D_METHOD("get", "key"), &GDLevelDB::get);
-	ClassDB::bind_method(D_METHOD("put", "key", "value", "sync"), &GDLevelDB::put, DEFVAL(false));
-	ClassDB::bind_method(D_METHOD("delete", "key", "sync"), &GDLevelDB::_delete, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("get", "key", "options"), &GDLevelDB::get, DEFVAL(read_options));
+	ClassDB::bind_method(D_METHOD("put", "key", "value", "options"), &GDLevelDB::put, DEFVAL(write_options));
+	ClassDB::bind_method(D_METHOD("delete", "key", "options"), &GDLevelDB::_delete, DEFVAL(write_options));
 	ClassDB::bind_method(D_METHOD("print", "bytes"), &GDLevelDB::print);
 }
 
 GDLevelDB::GDLevelDB() {
 	// Initialize any variables here.
-	options["create_if_missing"] = false;
-	options["error_if_exists"] = false;
-	options["paranoid_checks"] = false;
 }
 
 GDLevelDB::~GDLevelDB() {
@@ -32,7 +47,7 @@ GDLevelDB::~GDLevelDB() {
 	}
 }
 
-bool GDLevelDB::open(String path) {
+bool GDLevelDB::open(String path, Dictionary options) {
 	
 	if(db != nullptr)
 	{
@@ -41,15 +56,14 @@ bool GDLevelDB::open(String path) {
 		return false;
 	}
 	
-	// TODO implement customizable options
 	UtilityFunctions::print("[GDLevelDB] Opening database at:", path);
 	
-	leveldb::Options options;
-    options.create_if_missing = this->options["create_if_missing"];
-	options.error_if_exists = this->options["error_if_exists"];
-    options.paranoid_checks = this->options["paranoid_checks"];
+	leveldb::Options db_options;
+	db_options.create_if_missing = options.get("create_if_missing", false);
+	db_options.error_if_exists = options.get("error_if_exists", false);
+    db_options.paranoid_checks = options.get("paranoid_checks", false);
 
-	leveldb::Status status = leveldb::DB::Open(options, path.ascii().get_data(), &db);
+	leveldb::Status status = leveldb::DB::Open(db_options, path.ascii().get_data(), &db);
 
 	if (false == status.ok())
     {
@@ -120,7 +134,7 @@ Array GDLevelDB::keys()
 	return keys;
 }
 
-PackedByteArray GDLevelDB::get(PackedByteArray key)
+PackedByteArray GDLevelDB::get(PackedByteArray key, Dictionary options)
 {
 	PackedByteArray data;
 
@@ -130,8 +144,12 @@ PackedByteArray GDLevelDB::get(PackedByteArray key)
 		return data;
 	}
 
+	leveldb::ReadOptions read_options;
+	read_options.verify_checksums = options.get("verify_checksums", false);
+	read_options.fill_cache = options.get("fill_cache", true);
+
 	std::string value;
-	leveldb::Status status = db->Get(leveldb::ReadOptions(), leveldb::Slice((const char *) key.ptr(), key.size()), &value);
+	leveldb::Status status = db->Get(read_options, slice_from_bytes(key), &value);
 
 	if (false == status.ok())
 	{
@@ -153,23 +171,20 @@ PackedByteArray GDLevelDB::get(PackedByteArray key)
 	return data;
 }
 
-bool GDLevelDB::put(PackedByteArray key, PackedByteArray value, bool sync = false)
+bool GDLevelDB::put(PackedByteArray key, PackedByteArray value, Dictionary options)
 {
 	if(db == nullptr)
 	{
 		UtilityFunctions::printerr("[GDLevelDB] Cannot put value into an unopened database!");
 		return false;
 	}
-
-	auto key_slice = leveldb::Slice((const char *) key.ptr(), key.size());
-	auto value_slice = leveldb::Slice((const char *) value.ptr(), value.size());
 	
-	auto options = leveldb::WriteOptions();
-	options.sync = sync;
+	leveldb::WriteOptions write_options;
+	write_options.sync = options.get("sync", false);
 
 	// FIXME If Put is async won't value slice potentially point to dead memory?
 	// Maybe this should be noted in the documentation.
-	leveldb::Status status = db->Put(options, key_slice, value_slice);
+	leveldb::Status status = db->Put(write_options, slice_from_bytes(key), slice_from_bytes(value));
 
 	if (false == status.ok())
 	{
@@ -181,19 +196,18 @@ bool GDLevelDB::put(PackedByteArray key, PackedByteArray value, bool sync = fals
 	return true;
 }
 
-bool GDLevelDB::_delete(PackedByteArray key, bool sync)
+bool GDLevelDB::_delete(PackedByteArray key, Dictionary options)
 {
 	if(db == nullptr)
 	{
 		UtilityFunctions::printerr("[GDLevelDB] Cannot delete key/value pair from an unopened database!");
 		return false;
 	}
+	
+	leveldb::WriteOptions write_options;
+	write_options.sync = options.get("sync", false);
 
-	auto key_slice = leveldb::Slice((const char *) key.ptr(), key.size());
-	auto options = leveldb::WriteOptions();
-	options.sync = sync;
-
-	leveldb::Status status = db->Delete(options, key_slice);
+	leveldb::Status status = db->Delete(write_options, slice_from_bytes(key));
 
 	if (false == status.ok())
 	{
