@@ -8,8 +8,8 @@ A GDExtension providing a wrapper for the LevelDB library. Compatible with Godot
 - [2Shady4U](https://github.com/2shady4u) from [https://github.com/2shady4u/godot-sqlite](https://github.com/2shady4u/godot-sqlite) for the GitHub Action scripts.
 
 # Features for future versions
-[] Snapshots
-[] Batch operations
+- [ ] Snapshots
+- [ ] Batch operations
 
 # Development
 
