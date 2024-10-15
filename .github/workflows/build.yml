@@ -131,7 +131,7 @@ jobs:
           body_path: ${{ env.PROJECT_FOLDER }}/.github/workflows/release_template.md
           files: |
             ${{ env.PROJECT_FOLDER }}/demo.zip
-            ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}/../bin.zip
+            ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}/../../../godot_leveldb_${{ github.ref_name }}.zip
           draft: true
           prerelease: true
 
