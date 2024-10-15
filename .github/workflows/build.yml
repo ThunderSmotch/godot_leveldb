@@ -1,6 +1,7 @@
 name: All Builds
 on:
   push:
+    branches: [ master ]
     tags: 
       - "v*"
   workflow_dispatch:
@@ -8,7 +9,7 @@ on:
 # Global Settings
 env:
   PROJECT_FOLDER: .
-  TARGET_PATH: demo/bin/
+  TARGET_PATH: demo/addons/godot_leveldb/bin/
   TARGET_NAME: libgdleveldb
   SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
 
@@ -121,8 +122,8 @@ jobs:
           cd ${{ env.PROJECT_FOLDER }}
           cp -r ${{steps.download.outputs.download-path}}/**/* ${{ env.TARGET_PATH }}
           zip -r demo.zip demo/
-          cd ${{ env.TARGET_PATH }}/..
-          zip -r bin.zip bin/
+          cd ${{ env.TARGET_PATH }}/../../..
+          zip -r godot_leveldb_${{ github.ref_name }}.zip addons/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

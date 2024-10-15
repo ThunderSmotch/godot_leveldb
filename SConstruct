@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-target_path = ARGUMENTS.pop("target_path", "demo/bin/")
+target_path = ARGUMENTS.pop("target_path", "demo/addons/godot_leveldb/bin/")
 target_name = ARGUMENTS.pop("target_name", "libgdleveldb")
 target = "{}{}".format(
     target_path, target_name
