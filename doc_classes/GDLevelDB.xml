@@ -4,15 +4,46 @@
 		A LevelDB wrapper for Godot.
 	</brief_description>
 	<description>
-		A LevelDB wrapper for Godot.
+		A LevelDB wrapper for Godot. 
+		[b]Note:[/b] In LevelDB, keys and values are arbitrary byte arrays. Thus, one should use [PackedByteArray] for keys and values. Conversion to and from [String] is easy thanks to the buffer methods like [method String.to_ascii_buffer] and [method PackedByteArray.get_string_from_ascii]. As for other types of data, one must handle the encoding/decoding by hand, as seen in the example usage below.
 		[b]Example usage:[/b]
 		[codeblock]
-		extends Node
-
 		var db = GDLevelDB.new()
 
-		func _ready():
-		    pass
+		func _ready() -&gt; void:
+		    # Opening database (creating one if it does not exist)
+		    db.open("./demo_db", {"create_if_missing": true})
+
+		    # Saving a string and an integer
+		    var a_key: PackedByteArray = "key1".to_ascii_buffer()
+		    var other_key: PackedByteArray = "key2".to_ascii_buffer()
+
+		    var string: String = "value"
+
+		    var i: int = 1000
+		    var bytes: PackedByteArray
+		    bytes.resize(8) # 8 bytes = 64 bits, enough for an int
+		    bytes.encode_s64(0, i)
+
+		    db.put(a_key, string.to_ascii_buffer())
+		    db.put(other_key, bytes)
+
+		    # Print all the keys in this database assuming they were strings
+		    var keys = db.keys()
+		    for key in keys:
+		        db.print(key)
+
+		    # Print the string
+		    db.print(db.get(a_key))
+
+		    # Grab signed 64-bit int value
+		    print(db.get(other_key).decode_s64(0))
+
+		    # Deleting a key/value pair
+		    db.delete(a_key)
+
+		    # Close the database
+		    db.close()
 		[/codeblock]
 	</description>
 	<tutorials>
