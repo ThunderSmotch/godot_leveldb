@@ -79,7 +79,7 @@ bool GDLevelDB::close()
 {
 	if(db == nullptr)
 	{
-		UtilityFunctions::printerr("Trying to close an opened LevelDB but none found.");
+		UtilityFunctions::printerr("[GDLevelDB] Trying to close an opened LevelDB but none found.");
 		return false;
 	}
 

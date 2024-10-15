@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="GDLevelDB" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		A leveldb wrapper for Godot.
+		A LevelDB wrapper for Godot.
 	</brief_description>
 	<description>
-		A leveldb wrapper for Godot.
+		A LevelDB wrapper for Godot.
 		[b]Example usage:[/b]
 		[codeblock]
 		extends Node
@@ -22,7 +22,7 @@
 		<method name="close">
 			<return type="bool" />
 			<description>
-				Closes a previously opened database.
+				Closes a previously opened database. See [method open].
 			</description>
 		</method>
 		<method name="delete">
@@ -69,7 +69,7 @@
 			<param index="0" name="bytes" type="PackedByteArray" />
 			<description>
 				Attempts to print [param bytes] assuming they are an ASCII encoded string.
-				[b]Note:[/b] Will skip [code]NULL[/code] characters, which are allowed in the middle of leveldb keys and values.
+				[b]Note:[/b] Will skip [code]NULL[/code] characters, which are allowed in the middle of LevelDB keys and values.
 			</description>
 		</method>
 		<method name="put">
