@@ -19,9 +19,9 @@ env = SConscript("godot-cpp/SConstruct")
 # Should change the env_windows.cc to other excludes depending on target arch...
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
-env.Append(CPPPATH=["src/", "src/leveldb/include/", "src/leveldb/", "src/snappy/build/", "src/snappy/"])
+env.Append(CPPPATH=["src/", "src/leveldb/include/", "src/leveldb/", "src/snappy/build/", "src/snappy/build/Debug/", "src/snappy/build/Release/", "src/snappy/"])
 # Compile with snappy
-env.Append(CPPDEFINES=['HAVE_SNAPPY'], LIBPATH=["src/snappy/build/"], LIBS=["snappy"])
+env.Append(CPPDEFINES=['HAVE_SNAPPY'], LIBPATH=["src/snappy/build/", "src/snappy/build/Debug/", "src/snappy/build/Release/"], LIBS=["snappy"])
 sources = [Glob("src/leveldb/*/*.cc", 
                 exclude=['src/leveldb/*/*_test.cc', 'src/leveldb/benchmarks/*.cc',
                         'src/leveldb/util/env_*.cc', 'src/leveldb/util/testutil.cc']), Glob("src/*.cpp")]
