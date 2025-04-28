@@ -18,6 +18,7 @@ void GDLevelDB::_bind_methods() {
 	options["create_if_missing"] = false;
 	options["error_if_exists"] = false;
 	options["paranoid_checks"] = false;
+	options["snappy_compression"] = true;
 
 	Dictionary write_options = Dictionary();
 	write_options["sync"] = false;
@@ -62,6 +63,7 @@ bool GDLevelDB::open(String path, Dictionary options) {
 	db_options.create_if_missing = options.get("create_if_missing", false);
 	db_options.error_if_exists = options.get("error_if_exists", false);
     db_options.paranoid_checks = options.get("paranoid_checks", false);
+	db_options.compression = options.get("snappy_compression", true) ? leveldb::kSnappyCompression : leveldb::kNoCompression;
 
 	leveldb::Status status = leveldb::DB::Open(db_options, path.ascii().get_data(), &db);
 

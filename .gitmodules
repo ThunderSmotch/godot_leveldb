@@ -7,3 +7,6 @@
 	path = src/leveldb
 	url = https://github.com/google/leveldb.git
 	ignore = dirty
+[submodule "src/snappy"]
+	path = src/snappy
+	url = https://github.com/google/snappy

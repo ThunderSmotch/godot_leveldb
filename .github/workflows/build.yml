@@ -79,6 +79,13 @@ jobs:
         run: |
           mkdir -v -p ${{ env.PROJECT_FOLDER }}/${{ env.TARGET_PATH }}
 
+      - name: Compile Snappy library
+        run: |
+          cd ${{ env.PROJECT_FOLDER }}/src/snappy/
+          git submodule update --init
+          mkdir build
+          cd build && cmake ../ -DCMAKE_POSITION_INDEPENDENT_CODE=ON && make
+
       - name: Compilation
         run: |
           cd ${{ env.PROJECT_FOLDER }}
