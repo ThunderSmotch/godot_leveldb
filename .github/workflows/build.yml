@@ -23,7 +23,7 @@ jobs:
         target: [template_debug, template_release]
         # TODO Add Android build
         build:
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             platform: linux
             artifact-extension: so
             cache-name: linux-x86_64
