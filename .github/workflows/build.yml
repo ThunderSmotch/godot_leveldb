@@ -30,8 +30,7 @@ jobs:
           - os: windows-latest
             platform: windows
             artifact-extension: dll
-            cache-name: win-x86_64-mingw
-            flags: use_mingw=yes
+            cache-name: win-x86_64-msvc
           - os: macos-latest
             platform: macos
             artifact-extension: framework
@@ -77,8 +76,8 @@ jobs:
           git submodule update --init
           mkdir build
           cd build
-          cmake ../ -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-          cmake --build .
+          cmake ../ -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF -DSNAPPY_INSTALL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="/MT"
+          cmake --build . --config Release
 
       - name: Setup Target directory and Compile Snappy
         if: runner.os != 'Windows'
@@ -88,7 +87,7 @@ jobs:
           git submodule update --init
           mkdir build
           cd build
-          cmake ../ -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+          cmake ../ -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF -DSNAPPY_INSTALL=OFF
           make
 
       - name: Compilation
